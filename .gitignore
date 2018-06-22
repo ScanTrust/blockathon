@@ -1,0 +1,8 @@
+# venv and related config file
+venv/
+.venv
+
+# ide directories
+.vscode/
+.idea
+.pyc
