@@ -6,8 +6,6 @@ from bigchaindb_driver import BigchainDB
 from bigchaindb_driver.crypto import generate_keypair
 
 import conf
-from epcis_api.xtech_utils import add_wallet, transfer, get_wallet
-
 PUB_KEY = conf.BIGCHAIN_PUB
 PRIV_KEY = conf.BIGCHAIN_PRIV
 
@@ -92,64 +90,6 @@ def insert_scan(scan):
         txid=txid,
         code_asset_id=code_id
     )
-
-
-def get_or_create_wallet(pub_key):
-    wallet = find_wallet(pub_key)
-    if wallet:
-        wallet_id = wallet.get('data', {}).get('wallet_id', 'Not found')
-        txid = wallet['id']
-    else:
-        wallet_id = add_wallet(pub_key)
-        asset = {
-            "data": {
-                "name": "wallet",
-                "pub_key": pub_key,
-                "wallet_id": wallet_id,
-            }
-        }
-        meta = {}
-        txid = create_st_asset(asset, meta)
-
-    return dict(
-        txid=txid,
-        wallet_id=wallet_id
-    )
-
-
-def get_wallet_balance(pub_key, wallet_id):
-    """
-    Checks the balance of a wallet. Validates if the public key matches with this specific wallet.
-    """
-    wallet = find_wallet(pub_key)
-
-    if not wallet or wallet.get('data', {}).get('wallet_id', '') != wallet_id:
-        return dict(error="Wallet for this user is incorrect")
-
-    balance = get_wallet(wallet_id).get('balance', 'Error')
-
-    return dict(
-        wallet_id=wallet_id,
-        balance=balance
-    )
-
-
-def buy_code_action(post_data):
-    wallet_id = post_data['wallet_id']
-    pub_key = post_data['pub_key']
-    code_id = post_data['code_id']
-    code_transaction = get_transaction(code_id)
-    price = code_transaction.get('metadata', {}).get('scm_data', {}).get('price', None)
-    if not price:
-        raise Exception('Price was not set for this code.')
-
-    transer_money_res = transfer(wallet_id, price, 'Product purchased (%s)' % int(time.time()))
-
-    if transer_money_res.get('uuid', None) and transer_money_res.get('success', False):
-        # Transfer the code ownership
-        transfer_st_asset(code_id, pub_key, {})
-
-    return transer_money_res
 
 
 def create_st_asset(asset, meta=None):
@@ -240,36 +180,7 @@ def find_scan_asset(string):
     return {}
 
 
-
 def get_transaction(asset_id):
     bdb = get_bigchain_db()
     result = bdb.transactions.retrieve(asset_id)
     return result
-
-
-def find_wallet(pub_key):
-    bdb = get_bigchain_db()
-    result = bdb.assets.get(search="\"" + pub_key + "\"")
-    for r in result:
-        if r.get('data', {}).get('name', '') == 'wallet':
-            return r
-    return None
-
-# def insert_event(event_id, company):
-#     bdb = get_bigchain_db()
-#     asset = {
-#         "data": {
-#             "event_id": str(event_id)
-#         }
-#     }
-#     prepared_creation_tx = bdb.transactions.prepare(
-#         operation='CREATE',
-#         signers=company.bigchain_public_key,
-#         asset=asset
-#     )
-#     fulfilled_creation_tx = bdb.transactions.fulfill(prepared_creation_tx, private_keys=company.bigchain_private_key)
-#     sent_creation_tx = bdb.transactions.send(fulfilled_creation_tx)
-#     txid = fulfilled_creation_tx['id']
-#     print(txid)
-#
-#     bdb.transactions.status(txid)

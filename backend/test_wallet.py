@@ -1,4 +1,4 @@
-from epcis_api import xtech_utils
+from api import xtech_utils
 import uuid
 
 
