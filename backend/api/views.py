@@ -3,10 +3,11 @@
 
 from flask import jsonify, request
 from flask_restful import reqparse
-from api import app
-import api.bigchain_utils as utils
-from api.formatters import format_cause_response, format_history_response
-from . import gs1
+
+from . import app
+from . import bigchain_utils as utils
+from .formatters import format_cause_response, format_history_response
+from .services import gs1, recheck
 
 
 @app.route('/', methods=['GET'])
@@ -52,11 +53,23 @@ def user_history():
 
 @app.route('/api/gs1/', methods=['GET', 'POST'])
 def get_gs1():
+    """
+    Call the cloud.gs1.org service to retrieve data based on the gtin.  
+    """
     parser = reqparse.RequestParser()
     parser.add_argument('gtin', type=str, required=True)
     params = parser.parse_args()
 
     data = gs1.get_gtin(params.get('gtin'))
+    return jsonify(data)
+
+@app.route('/api/mock-services/recheck/')
+def get_recheck():
+    """
+    Returns mock data as a standin as for the under-development ReCheck 
+    service.  Also allows the local demo to run without a live service
+    """
+    data = recheck.DEFAULT_DATA
     return jsonify(data)
 
 
