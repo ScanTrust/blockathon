@@ -16,7 +16,6 @@ COPY ./conf/staging.cfg app.cfg
 
 # copy the source code over, including the conf & startup stubs
 COPY ./api/ ./api/
-COPY ./mock_st_backend/ ./mock_st_backend/
 COPY ./*.py ./
 
 CMD ["python", "runserver.py"]
