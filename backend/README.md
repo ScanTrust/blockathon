@@ -1,14 +1,12 @@
 # ScanTrust BDB API
 
-ScanTrust BDB API is an API that enables collaboration between the scantrust  __BigchainDB__.
+ScanTrust BDB API is an API that enables collaboration between the scantrust toolset and __BigchainDB__.
 
   - Flask API app
-  - MongoDB centralized database
-  - Partly decentralized BigchaibDB
+  - Decentralized BigchaibDB
 
 ### More Information
 ---
-  - [Trello](https://trello.com/b/II8PmbsM/blockchain) - Blockchain Trello board
   - [Flask](http://flask.pocoo.org/) - Flask (A Python micro framework)
   - [BigchainDB](https://www.bigchaindb.com/) - BigchainDB partly decentralized database
 
@@ -16,14 +14,13 @@ ScanTrust BDB API is an API that enables collaboration between the scantrust  __
 ---
 __Requirements:__
   - Python 3.5+
-  - MongoDB
-  - BigchainDB
+  - BigchainDB Driver
 
 ```sh
-(virtualenv)$ cd epcis-api
+(virtualenv)$ cd backend
 (virtualenv)$ pip install -r requirements.txt
 ```
-Edit *epcis/conf/sample_conf.cfg* and copy to *epcis/conf/__conf.cfg__*
+Edit *backend/conf/sample_conf.cfg* and copy to *backend/app.cfg*
 
 ### Usage
 ---
