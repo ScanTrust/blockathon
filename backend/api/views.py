@@ -84,7 +84,14 @@ def add_scan():
     if new:
         utils.transfer_st_asset(scan_asset, request_params["pub_key"], {})
 
-    return jsonify({"scan_asset_id": scan_asset, "points_awarded": points_awarded, "code_value": code["data"]["points"]})
+    return jsonify(
+        {
+            "scan_asset_id": scan_asset,
+            "points_awarded": points_awarded,
+            "code_value": code["data"]["points"],
+            "euipo_data": code["data"]["euipo_data"]
+        }
+    )
 
 
 @app.route('/api/causes/', methods=['GET'])
