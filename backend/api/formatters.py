@@ -1,3 +1,6 @@
+from api.services.bigchain import get_points
+
+
 def format_cause_response(causes):
     response = []
     if causes:
@@ -6,7 +9,7 @@ def format_cause_response(causes):
                 {
                     "name": c['data']['name'],
                     "pub_key": c['data']['pub_key'],
-                    "points": utils.get_points(c['data']['pub_key']),
+                    "points": get_points(c['data']['pub_key']),
                     "url": c['data']['url'],
                     "description": c['data']['description'],
                     "image_url": c['data']['image_url'],
