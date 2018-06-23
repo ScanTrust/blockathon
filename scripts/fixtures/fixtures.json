@@ -1,0 +1,551 @@
+{
+  "causes": [
+    {
+      "name": "The Water Projects",
+      "description": "You can help end the water crisis and restore hope. Together we’ll provide access to clean, safe and reliable water across sub-Saharan Africa - one community at a time.",
+      "url": "https://thewaterproject.org/",
+      "image_url": "https://slack-imgs.com/?c=1&url=https%3A%2F%2Fthewaterproject.org%2Fimages%2Fboy-cup_low.jpg",
+      "donation_value": 10,
+      "goal": "Every time you donate 10 points, The Water Project Foundation will provide 5 L of water for the people of Uganda",
+      "ns": "scantrust:causes"
+    },
+    {
+      "name": "The Gates Foundation - Mother and Child care",
+      "description": "With your help, we can ensure that women and newborns survive and remain healthy before, during, and after childbirth.",
+      "url": "https://www.gatesfoundation.org/What-We-Do/Global-Development/Maternal-Newborn-and-Child-Health",
+      "image_url": "https://slack-imgs.com/?c=1&url=http%3A%2F%2Fwww.gatesfoundation.org%2F~%2Fmedia%2FGFO%2FWhat-We-Do%2FMNCH%2FMNCH_Hero_702x279.jpg",
+      "donation_value": 50,
+      "goal": "Every time you donate 50 points, The Gates Foundation will take care of 1 newborn ",
+      "ns": "scantrust:causes"
+    },
+    {
+      "name": "Ocean Cleanup",
+      "description": "Help clear up the ocean plastic",
+      "url": "https://www.theoceancleanup.com/",
+      "image_url": "https://slack-imgs.com/?c=1&url=https%3A%2F%2Fwww.theoceancleanup.com%2Ffileadmin%2F_processed_%2Fcsm_opengraph-toc_00d7610508.jpg",
+      "donation_value": 20,
+      "goal": "Every time you donate 20 points, \"Ocean Cleanup\" will clean 5 square kilometers of Pacific Ocean.",
+      "ns": "scantrust:causes"
+    },
+    {
+      "name": "Global Fund for Widows",
+      "description": "Building hope and empowering widows and female breadwinners",
+      "url": "http://globalfundforwidows.org/global-reach/",
+      "image_url": "http://globalfundforwidows.org/wp-content/uploads/2016/12/about.png",
+      "donation_value": 20,
+      "goal": "Every time you donate 20 points, \"Global Fund for Widows\" will help 1 widow.",
+      "ns": "scantrust:causes"
+    },
+    {
+      "name": "Wakaf Community Projects",
+      "description": "Donate to benefit your religious community at large.",
+      "url": "http://www.global-ehsan-relief.org/global-wakaf-projects",
+      "image_url": "https://static.wixstatic.com/media/1df9f4_f673f8c92e52449794d72d75672040fb~mv2_d_1800_1200_s_2.jpg/v1/fill/w_1800,h_866,al_c,q_85/1df9f4_f673f8c92e52449794d72d75672040fb~mv2_d_1800_1200_s_2.webp",
+      "donation_value": 10,
+      "goal": "Every time you donate 10 points, \"Wakaf Community Projects\" will repair 5 square meters of masjid in Gaza.",
+      "ns": "scantrust:causes"
+    }
+  ],
+  "codes": [
+    {
+      "serial_number": "SN-AA953",
+      "message": "757CCF66950610713488791E",
+      "workorder": "3448",
+      "product_id": "1",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-FG036",
+      "message": "B0C13344C5061031247BE94A",
+      "workorder": "3448",
+      "product_id": "2",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-WM194",
+      "message": "3057EC455706100D84B9F839",
+      "workorder": "3448",
+      "product_id": "3",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-MH464",
+      "message": "18A3DF6E27061093648A4A56",
+      "workorder": "3448",
+      "product_id": "4",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-AW608",
+      "message": "15F9341F5606106E34D39ABC",
+      "workorder": "3448",
+      "product_id": "5",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-EC344",
+      "message": "EEC53A83B80610AB74BE3AF2",
+      "workorder": "3448",
+      "product_id": "6",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-CD496",
+      "message": "C7C163FF4A06104CC4160AEC",
+      "workorder": "3448",
+      "product_id": "7",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-CY252",
+      "message": "31DEFFC1200610B8E445BB6A",
+      "workorder": "3448",
+      "product_id": "8",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-TK972",
+      "message": "E602C6EAF00610B7A459CA25",
+      "workorder": "3448",
+      "product_id": "9",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-AD423",
+      "message": "C2177A59A80610D88432F865",
+      "workorder": "3448",
+      "product_id": "10",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-VC592",
+      "message": "7F14CE2FA4061082441AAA9D",
+      "workorder": "3448",
+      "product_id": "11",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-YM804",
+      "message": "3A9352C17206101674128A29",
+      "workorder": "3448",
+      "product_id": "12",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-SX942",
+      "message": "5B7774ACA50610F1E475EA69",
+      "workorder": "3448",
+      "product_id": "13",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-MN957",
+      "message": "BA571305DA0610B7E4C1CACB",
+      "workorder": "3448",
+      "product_id": "14",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-AE483",
+      "message": "81F66AE33A06103584378A6B",
+      "workorder": "3448",
+      "product_id": "15",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-RZ654",
+      "message": "84C30F124D06109314E2D9EF",
+      "workorder": "3448",
+      "product_id": "16",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-WP354",
+      "message": "5F9B228E5906104FD4A16B72",
+      "workorder": "3448",
+      "product_id": "17",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-TD027",
+      "message": "37D712D4BC06103CE473F9B7",
+      "workorder": "3448",
+      "product_id": "18",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-KM547",
+      "message": "E66899204206108454EB6996",
+      "workorder": "3448",
+      "product_id": "19",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-BB060",
+      "message": "EB4B3D6C940610A9444B3B71",
+      "workorder": "3448",
+      "product_id": "20",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-MD937",
+      "message": "86BC3B4F770610C5147CEBD5",
+      "workorder": "3448",
+      "product_id": "21",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-EM796",
+      "message": "9E315A6831061055D42AAAF6",
+      "workorder": "3448",
+      "product_id": "22",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-HY084",
+      "message": "A27D041E6D061006A425F9D7",
+      "workorder": "3448",
+      "product_id": "23",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-CR517",
+      "message": "365D5B9E3806109254B09909",
+      "workorder": "3448",
+      "product_id": "24",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-TE123",
+      "message": "651DA513B206105E341B0866",
+      "workorder": "3448",
+      "product_id": "25",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-DE337",
+      "message": "0D058B06CB06108D5417DA55",
+      "workorder": "3448",
+      "product_id": "26",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-HZ678",
+      "message": "24663255490610A77483AA3F",
+      "workorder": "3448",
+      "product_id": "27",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-FD838",
+      "message": "EA2AA16FC5061041C45E5873",
+      "workorder": "3448",
+      "product_id": "28",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-NX420",
+      "message": "62A88003E2061016044368EC",
+      "workorder": "3448",
+      "product_id": "29",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-MN967",
+      "message": "1649DD3058061020D460BA97",
+      "workorder": "3448",
+      "product_id": "30",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-MK384",
+      "message": "87F6E66F8906100D34138914",
+      "workorder": "3448",
+      "product_id": "31",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-FR157",
+      "message": "5D38EAEFB406103C3485D8D4",
+      "workorder": "3448",
+      "product_id": "32",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-YP240",
+      "message": "62D30EAD6E06107AF4969810",
+      "workorder": "3448",
+      "product_id": "33",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-XG247",
+      "message": "410C369AFB06106AE4F24847",
+      "workorder": "3448",
+      "product_id": "34",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-ZT270",
+      "message": "8F80444F98061044940B685E",
+      "workorder": "3448",
+      "product_id": "35",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-EM608",
+      "message": "4F8B133F88061014D4CAD846",
+      "workorder": "3448",
+      "product_id": "36",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-TD286",
+      "message": "DFFF699DC106102AD412597F",
+      "workorder": "3448",
+      "product_id": "37",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-WR600",
+      "message": "C4E707B81006100464736A25",
+      "workorder": "3448",
+      "product_id": "38",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-EZ044",
+      "message": "623A8D2576061041C4C7F88E",
+      "workorder": "3448",
+      "product_id": "39",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-BH531",
+      "message": "22CD444A1A0610B234D86A10",
+      "workorder": "3448",
+      "product_id": "40",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-RH134",
+      "message": "D3BF7D8D9E0610B2C47C7956",
+      "workorder": "3448",
+      "product_id": "41",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-ZD120",
+      "message": "5E07D40565061014248629FF",
+      "workorder": "3448",
+      "product_id": "42",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-XG849",
+      "message": "68E7A3EE4F0610F5342408F5",
+      "workorder": "3448",
+      "product_id": "43",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-YP715",
+      "message": "FE71B2725806100564D7E8CC",
+      "workorder": "3448",
+      "product_id": "44",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-WR966",
+      "message": "232A17C77A061042F4AB8A2F",
+      "workorder": "3448",
+      "product_id": "45",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-HE058",
+      "message": "BAB48CE684061017B458AAC5",
+      "workorder": "3448",
+      "product_id": "46",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-SX993",
+      "message": "48BB029A7D06109094870AB6",
+      "workorder": "3448",
+      "product_id": "47",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-ZZ512",
+      "message": "DC1DC2CF7406103034A79989",
+      "workorder": "3448",
+      "product_id": "48",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-PZ544",
+      "message": "E66A31D84306103864914825",
+      "workorder": "3448",
+      "product_id": "49",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    },
+    {
+      "serial_number": "SN-NH025",
+      "message": "60DEA8A9520610B514C808FE",
+      "workorder": "3448",
+      "product_id": "50",
+      "euipo_data": {
+        "some_field1": "some value",
+        "some_field2": "some another value"
+      }
+    }
+  ]
+}
