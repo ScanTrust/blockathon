@@ -1,6 +1,6 @@
 export default {
   st_config: {
-    'API_BASE_URL': 'https://api.staging.scantrust.io/api/v2/consumer/'
+    'API_BASE_URL': 'https://api.scantrust.com/api/v2/consumer/'
   },
   ts_config: {
     'API_BASE_URL': 'https://sometradeshift.url/'
@@ -13,6 +13,6 @@ export default {
     'EUIPO_URL': 'http://services.blockathon.eu/'
   },
   st_proxy_config: {
-    'API_BASE_URL': 'http://a168667d.ngrok.io/api/'
+    'API_BASE_URL': 'http://51.144.103.72:5000/api/'
   }
 }
