@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import requests
 from flask import jsonify, request
 from flask_restful import reqparse
 
@@ -143,6 +143,19 @@ def add_scan():
             "euipo_data": get_euipo_format()
         }
     )
+
+
+@app.route('/api/alerts/send/', methods=['POST'])
+def send_alert():
+    parser = reqparse.RequestParser()
+    parser.add_argument('message', type=str, required=True)
+    request_params = parser.parse_args()
+    result = requests.post(
+        url="http://services.blockathon.eu/api/blockathon/edb/authorities/alert",
+        json={"message": request_params["message"], "product": "53"},
+    )
+
+    return jsonify({"status": result.status_code})
 
 
 @app.route('/api/causes/', methods=['GET'])
