@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*
 from __future__ import print_function, absolute_import, unicode_literals
 
+import json
+import pprint
 import time
 from bigchaindb_driver import BigchainDB
 from bigchaindb_driver.crypto import generate_keypair
@@ -8,6 +10,8 @@ from bigchaindb_driver.crypto import generate_keypair
 import conf
 PUB_KEY = conf.BIGCHAIN_PUB
 PRIV_KEY = conf.BIGCHAIN_PRIV
+TOKEN = "f94e7a2af781da96ea398c23cf676d0403ca90f233a336d31ed5d2a67414d084"  # Pre generated token asset
+
 
 def get_bigchain_db():
     bdb_root_url = conf.BIGCHAIN_DB
@@ -19,12 +23,12 @@ def get_keypair():
     return key.public_key, key.private_key
 
 
-def onboard_user(pub_key, install_id):
+def onboard_user(pub_key):
     asset = {
         "data": {
-            "name": "user_onboarding",
+            "name": "user",
+            "ns": "scantrust:userdata",
             "pub_key": pub_key,
-            "install_id": install_id
         }
     }
     txid = create_st_asset(asset=asset, meta={})
@@ -32,49 +36,40 @@ def onboard_user(pub_key, install_id):
     return dict(
         name="user_onboarding",
         pub_key=pub_key,
-        install_id=install_id,
         txid=txid
     )
 
 
-def insert_code(code):
+def insert_cause(name, pub_key):
     asset = {
         "data": {
-            "name": "code",
-            "message": code.pop('message'),
-            "workorder": code.pop('workorder', ''),
-            "product": code.pop('product', ''),
-            "serial_number": code.pop('serial_number', ''),
-            "sequence": code.pop('sequence', '')
+            "name": name,
+            "description": "This is the cause description",
+            "ns": "scantrust:causes",
+            "pub_key": pub_key,
         }
     }
-
-    metadata = code
-
-    txid = create_st_asset(asset=asset, meta=metadata)
+    txid = create_st_asset(asset=asset, meta={})
 
     return dict(
+        name=name,
+        pub_key=pub_key,
         txid=txid
     )
 
 
-def insert_scan(scan):
+def insert_scan(scan, code_asset):
     message = scan.pop('message')
     uuid = scan.get('uuid')
     scan_asset = find_scan_asset(uuid)
 
     if scan_asset:
-        return dict(
-            txid=scan_asset['id'],
-            code_asset_id=scan_asset['data']['fk_code']
-        )
-
-    code_id = find_code_asset_id(message)
+        return scan_asset['id'], False
 
     asset = {
         "data": {
             "name": "scan",
-            "fk_code": code_id,
+            "fk_code": code_asset,
             "uuid": uuid,
             "lat": scan.get('lat', ''),
             "lng": scan.get('lng', ''),
@@ -86,10 +81,7 @@ def insert_scan(scan):
 
     txid = create_st_asset(asset=asset, meta=metadata)
 
-    return dict(
-        txid=txid,
-        code_asset_id=code_id
-    )
+    return txid, True
 
 
 def create_st_asset(asset, meta=None):
@@ -118,29 +110,76 @@ def transfer_asset_to_self(txid, meta):
 
 def transfer_st_asset(txid, to_pub_key, meta):
     bdb = get_bigchain_db()
-    meta['timestamp'] = int(time.time())
-    input_tx = bdb.transactions.retrieve(txid)
-
-    prepared_transfer_tx = bdb.transactions.prepare(
-        operation='TRANSFER',
-        inputs={
-            'fulfillment': input_tx['outputs'][0]['condition']['details'],
-            'owners_before': input_tx['outputs'][0]['public_keys'],
-            'fulfills': {
-                'txid': input_tx['id'],
-                'output': 0
-            }
+    signed_tx = get_transaction(txid)
+    output_index = 0
+    output = signed_tx['outputs'][output_index]
+    meta.update({"timestamp": "%s" % time.time()})
+    input_ = {
+        'fulfillment': output['condition']['details'],
+        'fulfills': {
+            'output_index': output_index,
+            'transaction_id': signed_tx['id'],
         },
+        'owners_before': output['public_keys'],
+    }
+    transfer_asset_id = signed_tx['id']
+    transfer_asset = {
+        'id': transfer_asset_id,
+    }
+    tx_transfer = bdb.transactions.prepare(
+        operation='TRANSFER',
+        inputs=input_,
+        asset=transfer_asset,
         recipients=to_pub_key,
         metadata=meta
     )
-    fulfilled_tx = bdb.transactions.fulfill(
-        prepared_transfer_tx,
-        private_keys=PRIV_KEY
+    signed_tx_transfer = bdb.transactions.fulfill(
+        tx_transfer,
+        private_keys=PRIV_KEY,
     )
-    bdb.transactions.send(fulfilled_tx)
+    sent_tx_transfer = bdb.transactions.send_commit(signed_tx_transfer)
+    return sent_tx_transfer["id"]
 
-    return fulfilled_tx['id']
+def transfer_divisible_asset(to_public_key, amount):
+    bdb = get_bigchain_db()
+    tx_id = ""
+    tx_outputs = bdb.outputs.get(PUB_KEY, spent=False)
+    tx_list = bdb.transactions.get(asset_id=TOKEN)
+    for tx in tx_list:
+        for tx_output in tx_outputs:
+            if tx["id"] == tx_output["transaction_id"]:
+                if tx["operation"] == 'CREATE':
+                    tx_id = tx["id"]
+                if tx["operation"] == 'TRANSFER':
+                    tx_id = tx["asset"]["id"]
+                available = int(tx["outputs"][tx_output["output_index"]]["amount"])
+                output = tx['outputs'][tx_output["output_index"]]
+                transfer_input = {
+                   'fulfillment': output['condition']['details'],
+                   'fulfills': {
+                       'output_index': tx_output["output_index"],
+                       'transaction_id': tx["id"],
+                   },
+                   'owners_before': output['public_keys'],
+                }
+                transfer_asset = {
+                   'id': tx_id,
+                }
+                recipients = [([to_public_key], amount)]
+                if available - amount > 0:
+                    recipients.append(([PUB_KEY], available-amount))
+                prepared_transfer_tx = bdb.transactions.prepare(
+                    operation='TRANSFER',
+                    asset=transfer_asset,
+                    inputs=transfer_input,
+                    recipients=recipients
+                )
+                fulfilled_transfer_tx = bdb.transactions.fulfill(
+                    prepared_transfer_tx,
+                    private_keys=PRIV_KEY
+                )
+
+                return bdb.transactions.send_commit(fulfilled_transfer_tx)
 
 
 def find_code_asset_id(message):
@@ -162,11 +201,11 @@ def find_asset_id(message):
         return result[0]['id']
 
 
-def find_asset(string):
+def find_asset(string, multiple=False):
     bdb = get_bigchain_db()
-    result = bdb.assets.get(search="\"" + string + "\"")
+    result = bdb.assets.get(search=string)
     if result:
-        return result[0]
+        return result if multiple else result[0]
     return {}
 
 
@@ -184,3 +223,53 @@ def get_transaction(asset_id):
     bdb = get_bigchain_db()
     result = bdb.transactions.retrieve(asset_id)
     return result
+
+
+def get_transactions(asset_id):
+    bdb = get_bigchain_db()
+    result = bdb.transactions.get(asset_id=asset_id)
+    return result
+
+
+def get_points(pub_key):
+    bdb = get_bigchain_db()
+    tokens = 0
+    tx_list = bdb.transactions.get(asset_id=TOKEN)
+    tx_outputs = bdb.outputs.get(pub_key, spent=False)
+
+    for tx in tx_list:
+        for tx_output in tx_outputs:
+            if tx["id"] == tx_output["transaction_id"]:
+                tokens += int(tx["outputs"][tx_output['output_index']]["amount"])
+    return tokens
+
+
+def get_history(pub_key):
+    bdb = get_bigchain_db()
+    tx_list = bdb.transactions.get(asset_id=TOKEN)
+    tx_outputs = bdb.outputs.get(pub_key, spent=False)
+
+    for tx in tx_list:
+        for tx_output in tx_outputs:
+            if tx["id"] == tx_output["transaction_id"]:
+                print(json.dumps(tx, indent=4, sort_keys=True))
+                print('===============')
+    return {}
+
+
+def format_cause_response(causes):
+    response = []
+    if causes:
+        print(causes)
+        for c in causes:
+            response.append(
+                {
+                    "name": c['data']['name'],
+                    "pub_key": c['data']['pub_key'],
+                    "points": get_points(c['data']['pub_key']),
+                    "url": c['data']['url'],
+                    "description": c['data']['description'],
+                    "image_url": c['data']['image_url']
+                }
+            )
+    return response

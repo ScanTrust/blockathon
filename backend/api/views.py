@@ -4,7 +4,7 @@
 from flask import jsonify, request
 from flask_restful import reqparse
 from api import app
-from api.bigchain_utils import insert_code, insert_scan, get_keypair
+import api.bigchain_utils as utils
 
 
 @app.route('/', methods=['GET'])
@@ -12,37 +12,45 @@ def index():
     """
     Main route, it works!
     """
-    pub, priv = get_keypair()
-    return jsonify({"pub": pub, "priv": priv})
+    #pub, priv = get_keypair()
+    # insert_cause("Cause 1", "PUB_KEY_1")
+    # insert_cause("Cause 1", "PUB_KEY_2")
+    # insert_cause("Cause 1", "PUB_KEY_3")
+    # insert_cause("Cause 1", "PUB_KEY_4")
+    resp = utils.find_asset("\"scantrust:codes\" \"%s\"" % "2086CD10B50610B8549A3AD0")
+    return jsonify(resp)
 
 
-# @app.route('/api/register/onboard/', methods=['POST'])
-# def onboard():
-#     """
-#     Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
-#     """
-#     parser = reqparse.RequestParser()
-#     parser.add_argument('pub_key', type=str, required=True)
-#     parser.add_argument('install_id', type=str, required=True)
-#     request_params = parser.parse_args()
-#
-#     result = onboard_user(request_params['pub_key'], request_params['install_id'])
-#
-#     return jsonify(result)
-
-
-@app.route('/api/codes/add/', methods=['POST'])
-def add_code():
+@app.route('/api/users/info/', methods=['POST'])
+def user_info():
     """
-    Add a code as asset to BDB.
+    Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
     """
-    data = request.get_json(force=True)
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
 
-    if not data.get('message', None):
-        return jsonify(error="Message is required."), 400
-    result = insert_code(data)
+    user = utils.find_asset("\"scantrust:userdata\"  \"user\" \"%s\"" % request_params['pub_key'])
+    if user:
+        user["data"]["points"] = utils.get_points(request_params['pub_key'])
+        return jsonify(user['data'])
 
+    result = utils.onboard_user(request_params['pub_key'])
+    result["points"] = utils.get_points(request_params['pub_key'])
     return jsonify(result)
+
+
+@app.route('/api/users/history/', methods=['POST'])
+def user_history():
+    """
+    Get the donation (transaction) history for a user.
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
+    hist = utils.get_history(request_params["pub_key"])
+
+    return jsonify(hist)
 
 
 @app.route('/api/scans/add/', methods=['POST'])
@@ -53,14 +61,44 @@ def add_scan():
     """
     parser = reqparse.RequestParser()
     parser.add_argument('message', type=str, required=True)
+    parser.add_argument('pub_key', type=str, required=True)
     parser.add_argument('uuid', type=str, required=True)
     parser.add_argument('lat', type=float, required=True)
     parser.add_argument('lng', type=float, required=True)
     request_params = parser.parse_args()
 
-    result = insert_scan(request_params)
+    code = utils.find_asset("\"scantrust:codes\" \"%s\"" % request_params['message'])
 
-    return jsonify(result)
+    if not code:
+        return not_found()
+
+    transaction = {}
+    transactions = utils.get_transactions(code['id'])
+    points_awarded = False
+    if len(transactions) >= 1:
+        transaction = transactions[len(transactions) - 1]
+    if transaction and not transaction['metadata'].get('is_consumed', True):
+        # Create a new transaction to self, where the metadata states is_consumed=True
+        # Assign points
+        utils.transfer_asset_to_self(transaction["id"], {"is_consumed": True})
+        utils.transfer_divisible_asset(request_params["pub_key"], code["data"]["points"])
+        points_awarded = True
+
+    scan_asset, new = utils.insert_scan(request_params, code["id"])
+    if new:
+        utils.transfer_st_asset(scan_asset, request_params["pub_key"], {})
+
+    return jsonify({"scan_asset_id": scan_asset, "points_awarded": points_awarded, "code_value": code["data"]["points"]})
+
+
+@app.route('/api/causes/', methods=['GET'])
+def get_causes():
+    """
+    Return a simple list of causes registered on the blockchain.
+    """
+    causes = utils.find_asset("\"scantrust:cause\"", multiple=True)
+    return jsonify(utils.format_cause_response(causes))
+
 
 
 @app.errorhandler(404)

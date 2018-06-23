@@ -15,7 +15,7 @@ WORKDIR /app
 COPY ./conf/staging.cfg app.cfg
 
 # copy the source code over, including the conf & startup stubs
-COPY ./epcis_api/ ./epcis_api/
+COPY ./backend/ ./backend/
 COPY ./runserver.py .
 COPY ./conf.py .
 

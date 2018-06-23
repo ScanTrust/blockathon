@@ -1,6 +1,6 @@
-# ScanTrust EPCIS API
+# ScanTrust BDB API
 
-ScanTrust EPCIS API is an API that enables EPCIS events to be stored and transactions to be managed by __BigchainDB__.
+ScanTrust BDB API is an API that enables collaboration between the scantrust  __BigchainDB__.
 
   - Flask API app
   - MongoDB centralized database
