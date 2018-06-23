@@ -21,3 +21,4 @@ CORS(app)
 api = flask_restful.Api(app=app)
 
 import api.views
+import mock_st_backend.views

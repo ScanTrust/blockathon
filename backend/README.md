@@ -5,6 +5,8 @@ ScanTrust BDB API is an API that enables collaboration between the scantrust too
   - Flask API app
   - Decentralized BigchaibDB
 
+ This project includes a mock of the ScanTrust backend in order to provide a runnable demo.
+
 ### More Information
 ---
   - [Flask](http://flask.pocoo.org/) - Flask (A Python micro framework)
