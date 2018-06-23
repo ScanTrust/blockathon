@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*
 from __future__ import print_function, absolute_import, unicode_literals
-
-import json
-import pprint
 import time
 from bigchaindb_driver import BigchainDB
 from bigchaindb_driver.crypto import generate_keypair
@@ -59,7 +56,6 @@ def insert_cause(name, pub_key):
 
 
 def insert_scan(scan, code_asset):
-    message = scan.pop('message')
     uuid = scan.get('uuid')
     scan_asset = find_scan_asset(uuid)
 
@@ -140,6 +136,7 @@ def transfer_st_asset(txid, to_pub_key, meta):
     sent_tx_transfer = bdb.transactions.send_commit(signed_tx_transfer)
     return sent_tx_transfer["id"]
 
+
 def transfer_divisible_asset(to_public_key, amount):
     bdb = get_bigchain_db()
     tx_id = ""
@@ -180,6 +177,23 @@ def transfer_divisible_asset(to_public_key, amount):
                 )
 
                 return bdb.transactions.send_commit(fulfilled_transfer_tx)
+
+
+def get_spent_tokens_public_key(pub_key):
+    bdb = get_bigchain_db()
+    tx_list = bdb.transactions.get(asset_id=TOKEN, operation='TRANSFER')
+    tx_outputs1 = bdb.outputs.get(pub_key, spent=True)
+    tx_outputs2 = bdb.outputs.get(pub_key, spent=False)
+    tx_outputs = tx_outputs1 + tx_outputs2
+
+    res = []
+    for tx_output in tx_outputs:
+        for tx in tx_list:
+            if tx["id"] == tx_output["transaction_id"]:
+                for output in tx["outputs"]:
+                    if output["condition"]["details"]["public_key"] != pub_key and tx["inputs"][0]["owners_before"][0] == pub_key:
+                        res.append({"amount": output["amount"], "to": output["condition"]["details"]["public_key"]})
+    return res
 
 
 def find_code_asset_id(message):
@@ -242,34 +256,3 @@ def get_points(pub_key):
             if tx["id"] == tx_output["transaction_id"]:
                 tokens += int(tx["outputs"][tx_output['output_index']]["amount"])
     return tokens
-
-
-def get_history(pub_key):
-    bdb = get_bigchain_db()
-    tx_list = bdb.transactions.get(asset_id=TOKEN)
-    tx_outputs = bdb.outputs.get(pub_key, spent=False)
-
-    for tx in tx_list:
-        for tx_output in tx_outputs:
-            if tx["id"] == tx_output["transaction_id"]:
-                print(json.dumps(tx, indent=4, sort_keys=True))
-                print('===============')
-    return {}
-
-
-def format_cause_response(causes):
-    response = []
-    if causes:
-        print(causes)
-        for c in causes:
-            response.append(
-                {
-                    "name": c['data']['name'],
-                    "pub_key": c['data']['pub_key'],
-                    "points": get_points(c['data']['pub_key']),
-                    "url": c['data']['url'],
-                    "description": c['data']['description'],
-                    "image_url": c['data']['image_url']
-                }
-            )
-    return response

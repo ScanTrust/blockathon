@@ -5,6 +5,7 @@ from flask import jsonify, request
 from flask_restful import reqparse
 from api import app
 import api.bigchain_utils as utils
+from api.formatters import format_cause_response, format_history_response
 
 
 @app.route('/', methods=['GET'])
@@ -12,13 +13,7 @@ def index():
     """
     Main route, it works!
     """
-    #pub, priv = get_keypair()
-    # insert_cause("Cause 1", "PUB_KEY_1")
-    # insert_cause("Cause 1", "PUB_KEY_2")
-    # insert_cause("Cause 1", "PUB_KEY_3")
-    # insert_cause("Cause 1", "PUB_KEY_4")
-    resp = utils.find_asset("\"scantrust:codes\" \"%s\"" % "2086CD10B50610B8549A3AD0")
-    return jsonify(resp)
+    return jsonify({})
 
 
 @app.route('/api/users/info/', methods=['POST'])
@@ -44,13 +39,14 @@ def user_info():
 def user_history():
     """
     Get the donation (transaction) history for a user.
+    Grouped by cause.
     """
     parser = reqparse.RequestParser()
     parser.add_argument('pub_key', type=str, required=True)
     request_params = parser.parse_args()
-    hist = utils.get_history(request_params["pub_key"])
+    history = utils.get_spent_tokens_public_key(request_params["pub_key"])
 
-    return jsonify(hist)
+    return jsonify(format_history_response(history))
 
 
 @app.route('/api/scans/add/', methods=['POST'])
@@ -97,7 +93,7 @@ def get_causes():
     Return a simple list of causes registered on the blockchain.
     """
     causes = utils.find_asset("\"scantrust:cause\"", multiple=True)
-    return jsonify(utils.format_cause_response(causes))
+    return jsonify(format_cause_response(causes))
 
 
 
