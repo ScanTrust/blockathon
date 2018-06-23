@@ -119,11 +119,11 @@ export default {
   },
 
   getOutputs: async function (publicKey, spent = false) {
-    await connection.listOutputs(publicKey, spent)
+    return await connection.listOutputs(publicKey, spent)
   },
 
   getTransaction: async function (assetId) {
-    await connection.getTransaction(assetId)
+    return await connection.getTransaction(assetId)
   },
 
   transferMultipleAssets: async function (unspentTxs, keypair, outputs, metadata) {

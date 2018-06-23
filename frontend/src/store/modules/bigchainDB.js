@@ -29,6 +29,7 @@ const actions = {
 
   loadImpactHistory ({ commit }, { installId }) {
     BigChainDBService.loadImpactHistory(installId).then((res) => {
+      console.log('update history')
       commit(types.LOAD_HISTORY, res)
     })
   },

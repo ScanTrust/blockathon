@@ -13,6 +13,6 @@ export default {
     'EUIPO_URL': 'http://services.blockathon.eu/'
   },
   st_proxy_config: {
-    'API_BASE_URL': 'http://51.144.103.72:5000/api/'
+    'API_BASE_URL': 'http://a168667d.ngrok.io/api/'
   }
 }
