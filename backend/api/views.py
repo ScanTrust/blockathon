@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import requests
 from flask import jsonify, request
+from flask_cors import cross_origin
 from flask_restful import reqparse
-from flask_restful.utils.cors import crossdomain
 
 from . import app
 from .formatters import format_cause_response, format_history_response, get_mocked_info_response_format, \
@@ -12,7 +12,7 @@ from .services import gs1, recheck, bigchain
 
 
 @app.route('/', methods=['GET'])
-@crossdomain(origin='*')
+@cross_origin()
 def index():
     """
     Main route, it works!
@@ -25,7 +25,7 @@ def index():
 
 
 @app.route('/api/v2/', methods=['GET'])
-@crossdomain(origin='*')
+@cross_origin()
 def api_index():
     """
     Main route, it works!
@@ -34,7 +34,7 @@ def api_index():
 
 
 @app.route('/api/v2/consumer/scan/<string:uuid>/combined-info/', methods=['GET'])
-@crossdomain(origin='*')
+@cross_origin()
 def combined_info(uuid):
     """
     Main route, it works!
@@ -47,7 +47,7 @@ def combined_info(uuid):
 
 
 @app.route('/api/gs1/', methods=['GET', 'POST'])
-@crossdomain(origin='*')
+@cross_origin()
 def get_gs1():
     """
     Call the cloud.gs1.org service to retrieve data based on the gtin.  
@@ -61,7 +61,7 @@ def get_gs1():
 
 
 @app.route('/api/mock-services/recheck/')
-@crossdomain(origin='*')
+@cross_origin()
 def get_recheck():
     """
     Returns mock data as a standin as for the under-development ReCheck 
@@ -74,7 +74,7 @@ def get_recheck():
 # APP ROUTES
 
 @app.route('/api/users/info/', methods=['POST'])
-@crossdomain(origin='*')
+@cross_origin()
 def user_info():
     """
     Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
@@ -94,7 +94,7 @@ def user_info():
 
 
 @app.route('/api/users/history/', methods=['POST'])
-@crossdomain(origin='*')
+@cross_origin()
 def user_history():
     """
     Get the donation (transaction) history for a user.
@@ -109,7 +109,7 @@ def user_history():
 
 
 @app.route('/api/scans/add/', methods=['POST'])
-@crossdomain(origin='*')
+@cross_origin()
 def add_scan():
     """
     Add a scan as asset to BDB and transfer the ownership to the client.
@@ -155,7 +155,7 @@ def add_scan():
 
 
 @app.route('/api/alerts/send/', methods=['POST'])
-@crossdomain(origin='*')
+@cross_origin()
 def send_alert():
     parser = reqparse.RequestParser()
     parser.add_argument('message', type=str, required=True)
@@ -169,7 +169,7 @@ def send_alert():
 
 
 @app.route('/api/causes/', methods=['GET'])
-@crossdomain(origin='*')
+@cross_origin()
 def get_causes():
     """
     Return a simple list of causes registered on the blockchain.
@@ -179,7 +179,7 @@ def get_causes():
 
 
 @app.errorhandler(404)
-@crossdomain(origin='*')
+@cross_origin()
 def not_found(error=None):
     """
     Handles 404 errors.
