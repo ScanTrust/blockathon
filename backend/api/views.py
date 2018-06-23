@@ -5,7 +5,8 @@ from flask import jsonify, request
 from flask_restful import reqparse
 
 from . import app
-from .formatters import format_cause_response, format_history_response
+from .formatters import format_cause_response, format_history_response, get_mocked_info_response_format, \
+    get_euipo_format
 from .services import gs1, recheck, bigchain
 
 
@@ -20,12 +21,14 @@ def index():
 # urls need to stay the same (api/v2) since the various frontend components 
 # take a host:port as base, not a full base url (e.g. :5000/api/v2/) 
 
+
 @app.route('/api/v2/', methods=['GET'])
 def api_index():
     """
     Main route, it works!
     """
     return jsonify({})
+
 
 @app.route('/api/v2/consumer/scan/<string:uuid>/combined-info/', methods=['GET'])
 def combined_info(uuid):
@@ -38,6 +41,7 @@ def combined_info(uuid):
 # * gs1 - calls the cloud gs1 services
 # * recheck - uses a simple mock response, to avoide dependency on a in-dev mode service
 
+
 @app.route('/api/gs1/', methods=['GET', 'POST'])
 def get_gs1():
     """
@@ -49,6 +53,7 @@ def get_gs1():
 
     data = gs1.get_gtin(params.get('gtin'))
     return jsonify(data)
+
 
 @app.route('/api/mock-services/recheck/')
 def get_recheck():
@@ -95,8 +100,6 @@ def user_history():
     return jsonify(format_history_response(history))
 
 
-
-
 @app.route('/api/scans/add/', methods=['POST'])
 def add_scan():
     """
@@ -137,7 +140,7 @@ def add_scan():
             "scan_asset_id": scan_asset,
             "points_awarded": points_awarded,
             "code_value": code["data"]["points"],
-            "euipo_data": code["data"]["euipo_data"]
+            "euipo_data": get_euipo_format()
         }
     )
 
@@ -149,7 +152,6 @@ def get_causes():
     """
     causes = bigchain.find_asset("\"scantrust:cause\"", multiple=True)
     return jsonify(format_cause_response(causes))
-
 
 
 @app.errorhandler(404)
