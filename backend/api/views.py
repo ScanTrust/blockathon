@@ -5,9 +5,8 @@ from flask import jsonify, request
 from flask_restful import reqparse
 
 from . import app
-from . import bigchain_utils as utils
 from .formatters import format_cause_response, format_history_response
-from .services import gs1, recheck
+from .services import gs1, recheck, bigchain
 
 
 @app.route('/', methods=['GET'])
@@ -17,39 +16,27 @@ def index():
     """
     return jsonify({})
 
+# MOCK SCANTRUST BACKEND
+# urls need to stay the same (api/v2) since the various frontend components 
+# take a host:port as base, not a full base url (e.g. :5000/api/v2/) 
 
-@app.route('/api/users/info/', methods=['POST'])
-def user_info():
+@app.route('/api/v2/', methods=['GET'])
+def api_index():
     """
-    Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
+    Main route, it works!
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('pub_key', type=str, required=True)
-    request_params = parser.parse_args()
+    return jsonify({})
 
-    user = utils.find_asset("\"scantrust:userdata\"  \"user\" \"%s\"" % request_params['pub_key'])
-    if user:
-        user["data"]["points"] = utils.get_points(request_params['pub_key'])
-        return jsonify(user['data'])
-
-    result = utils.onboard_user(request_params['pub_key'])
-    result["points"] = utils.get_points(request_params['pub_key'])
-    return jsonify(result)
-
-
-@app.route('/api/users/history/', methods=['POST'])
-def user_history():
+@app.route('/api/v2/consumer/scan/<string:uuid>/combined-info/', methods=['GET'])
+def combined_info(uuid):
     """
-    Get the donation (transaction) history for a user.
-    Grouped by cause.
+    Main route, it works!
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('pub_key', type=str, required=True)
-    request_params = parser.parse_args()
-    history = utils.get_spent_tokens_public_key(request_params["pub_key"])
+    return jsonify(get_mocked_info_response_format(uuid))
 
-    return jsonify(format_history_response(history))
-
+# OTHER EXTERNAL SERVICES 
+# * gs1 - calls the cloud gs1 services
+# * recheck - uses a simple mock response, to avoide dependency on a in-dev mode service
 
 @app.route('/api/gs1/', methods=['GET', 'POST'])
 def get_gs1():
@@ -73,6 +60,43 @@ def get_recheck():
     return jsonify(data)
 
 
+# APP ROUTES
+
+@app.route('/api/users/info/', methods=['POST'])
+def user_info():
+    """
+    Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
+
+    user = bigchain.find_asset("\"scantrust:userdata\"  \"user\" \"%s\"" % request_params['pub_key'])
+    if user:
+        user["data"]["points"] = bigchain.get_points(request_params['pub_key'])
+        return jsonify(user['data'])
+
+    result = bigchain.onboard_user(request_params['pub_key'])
+    result["points"] = bigchain.get_points(request_params['pub_key'])
+    return jsonify(result)
+
+
+@app.route('/api/users/history/', methods=['POST'])
+def user_history():
+    """
+    Get the donation (transaction) history for a user.
+    Grouped by cause.
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
+    history = bigchain.get_spent_tokens_public_key(request_params["pub_key"])
+
+    return jsonify(format_history_response(history))
+
+
+
+
 @app.route('/api/scans/add/', methods=['POST'])
 def add_scan():
     """
@@ -87,26 +111,26 @@ def add_scan():
     parser.add_argument('lng', type=float, required=True)
     request_params = parser.parse_args()
 
-    code = utils.find_asset("\"scantrust:codes\" \"%s\"" % request_params['message'])
+    code = bigchain.find_asset("\"scantrust:codes\" \"%s\"" % request_params['message'])
 
     if not code:
         return not_found()
 
     transaction = {}
-    transactions = utils.get_transactions(code['id'])
+    transactions = bigchain.get_transactions(code['id'])
     points_awarded = False
     if len(transactions) >= 1:
         transaction = transactions[len(transactions) - 1]
     if transaction and not transaction['metadata'].get('is_consumed', True):
         # Create a new transaction to self, where the metadata states is_consumed=True
         # Assign points
-        utils.transfer_asset_to_self(transaction["id"], {"is_consumed": True})
-        utils.transfer_divisible_asset(request_params["pub_key"], code["data"]["points"])
+        bigchain.transfer_asset_to_self(transaction["id"], {"is_consumed": True})
+        bigchain.transfer_divisible_asset(request_params["pub_key"], code["data"]["points"])
         points_awarded = True
 
-    scan_asset, new = utils.insert_scan(request_params, code["id"])
+    scan_asset, new = bigchain.insert_scan(request_params, code["id"])
     if new:
-        utils.transfer_st_asset(scan_asset, request_params["pub_key"], {})
+        bigchain.transfer_st_asset(scan_asset, request_params["pub_key"], {})
 
     return jsonify(
         {
@@ -123,7 +147,7 @@ def get_causes():
     """
     Return a simple list of causes registered on the blockchain.
     """
-    causes = utils.find_asset("\"scantrust:cause\"", multiple=True)
+    causes = bigchain.find_asset("\"scantrust:cause\"", multiple=True)
     return jsonify(format_cause_response(causes))
 
 

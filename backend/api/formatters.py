@@ -1,6 +1,3 @@
-import api.bigchain_utils as utils
-
-
 def format_cause_response(causes):
     response = []
     if causes:
