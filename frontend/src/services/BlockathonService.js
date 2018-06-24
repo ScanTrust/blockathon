@@ -15,22 +15,51 @@ export default {
     blockathonAxios.defaults.headers.common['X-ScanTrust-Consumer-Api-Key'] = apiKey
   },
 
-  getLogistics: function (name) {
+  getEDBLogistics: function (name, params) {
+    var newParams = {}
+
+    params.forEach((param) => {
+      newParams[params.key] = params.value
+    })
     return new Promise((resolve, reject) => {
-      blockathonAxios.get('/api/blockathon/edb/logistics/' + name).then((res) => {
+      blockathonAxios.post('/api/blockathon/edb/logistics/' + name + '/', newParams).then((res) => {
         resolve(res.data)
       }).catch((err) => {
         reject(err)
       })
     })
   },
-  getEDB: function (name, options) {
+  checkEDB: function (name, params) {
+    var newParams = {}
+
+    params.forEach((param) => {
+      newParams[params.key] = params.value
+    })
+
     return new Promise((resolve, reject) => {
-      blockathonAxios.get('/api/blockathon/edb/' + name, options).then((res) => {
+      blockathonAxios.post('/api/blockathon/edb/' + name + '/', newParams).then((res) => {
         resolve(res.data)
       }).catch((err) => {
         reject(err)
       })
     })
+  },
+
+  checkFakeEDB: function (name, params) {
+    var newParams = {}
+    var nbField = params.length
+    var nbFieldWithValue = params.length
+
+    params.forEach((param) => {
+      newParams[param.key] = param.value
+      if (!param.value) {
+        nbFieldWithValue--
+      }
+    })
+
+    var percent = nbFieldWithValue / nbField * 100
+    // return new Promise((resolve, reject) => {
+    return percent.toFixed(0)
+    // })
   }
 }

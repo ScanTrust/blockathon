@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="36px" viewBox="0 0 16 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+        <g id="course" transform="translate(8.000000, 18.000000) rotate(90.000000) translate(-8.000000, -18.000000) translate(-10.000000, 10.000000)" fill="#666666" fill-rule="nonzero">
+            <polygon id="Shape" points="16 7 3.8 7 9.4 1.4 8 0 0 8 8 16 9.4 14.6 3.8 9 16 9"></polygon>
+            <rect id="Rectangle-6" x="18" y="7" width="2" height="2"></rect>
+            <rect id="Rectangle-6" x="22" y="7" width="2" height="2"></rect>
+            <rect id="Rectangle-6" x="26" y="7" width="2" height="2"></rect>
+            <rect id="Rectangle-6" x="30" y="7" width="2" height="2"></rect>
+            <rect id="Rectangle-6" x="34" y="7" width="2" height="2"></rect>
+        </g>
+</svg>

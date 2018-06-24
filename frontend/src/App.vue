@@ -38,7 +38,8 @@ export default {
   computed: mapGetters({
     loaded: 'isLoaded',
     sections: 'getSections',
-    snackBar: 'snackBar'
+    snackBar: 'snackBar',
+    code: 'code'
   }),
 
   created () {
@@ -47,12 +48,15 @@ export default {
     }
 
     this.$store.dispatch('saveUrlParameters', {qr: this.$route.query.qr, uid: this.$route.query.uid, apiKey: this.$route.query.api_key, installId: this.$route.query.install_id})
-    this.$store.dispatch('getCombinedInfos', {uid: this.$route.query.uid})
+    this.$store.dispatch('getCombinedInfos', {uid: this.$route.query.uid}).then(() => {
+      this.$store.dispatch('loadGS1', this.code.product.sku)
+    })
 
     // Blockchain code
     if (this.$route.query.install_id) {
       console.log('dispatching')
       this.$store.dispatch('loadCauses')
+      this.$store.dispatch('loadRecheck')
       this.$store.dispatch('initUserBDB', {installId: this.$route.query.install_id}).then(() => {
         this.$store.dispatch('createScanEvent', {message: this.$route.query.qr, uid: this.$route.query.uid, lat: 42, lng: 42, installId: this.$route.query.install_id})
         this.$store.dispatch('loadImpactHistory', {installId: this.$route.query.install_id})
