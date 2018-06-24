@@ -10,6 +10,30 @@ var STProxyAxios = axios.create({
 
 export default {
 
+  loadGS1: function (sku) {
+    return new Promise((resolve, reject) => {
+      STProxyAxios.post('gs1/', { gtin: '08850781700116'}).then((res) => {
+        resolve(res.data)
+      })
+    })
+  },
+
+  loadRecheck: function () {
+    return new Promise((resolve, reject) => {
+      STProxyAxios.get('mock-services/recheck/').then((res) => {
+        resolve(res.data)
+      })
+    })
+  },
+
+  sendAlert: function (message) {
+    return new Promise ((resolve, reject) => {
+      STProxyAxios.post('alerts/send/', {message: message}).then((res) => {
+        resolve(res)
+      })
+    })
+  },
+
   loadImpactHistory: function (installId) {
     const keyPair = this.loadKeys(installId)
     return new Promise((resolve) => {

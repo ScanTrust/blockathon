@@ -93,12 +93,16 @@ const actions = {
   },
 
   getCombinedInfos ({ commit }, { uid }) {
-    ScantrustService.getCombinedInfos(uid).then((combinedInfos) => {
-      commit(types.LOAD_SCAN_DATA, { scan: combinedInfos.scan })
-      commit(types.LOAD_CODE_DATA, { code: combinedInfos.code })
-      commit(types.LOAD_CAMPAIGN_DATA, { campaign: combinedInfos.campaign })
-      commit(types.LOAD_SMARTLABEL_DATA, { smartlabel: combinedInfos.smartlabel })
+    return new Promise((resolve, reject) => {
+      ScantrustService.getCombinedInfos(uid).then((combinedInfos) => {
+        commit(types.LOAD_SCAN_DATA, { scan: combinedInfos.scan })
+        commit(types.LOAD_CODE_DATA, { code: combinedInfos.code })
+        commit(types.LOAD_CAMPAIGN_DATA, { campaign: combinedInfos.campaign })
+        commit(types.LOAD_SMARTLABEL_DATA, { smartlabel: combinedInfos.smartlabel })
+        resolve()
+      })
     })
+
   },
 
   getScanData ({ commit }, { uid }) {
