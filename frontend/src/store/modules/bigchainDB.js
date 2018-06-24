@@ -58,7 +58,9 @@ const actions = {
       scores.push(BlockathonService.checkFakeEDB(field.key, field.params))
     })
     console.log('all scores ->' + scores)
-    commit(types.SET_EUIPO_SCORE, scores)
+    setTimeout(() => {
+      commit(types.SET_EUIPO_SCORE, scores)
+    }, 300)
     // if (~key.indexOf('_')) {
     //   BlockathonService.checkEDBLogistics(key, params).then((res) => {
     //     console.log('RES')

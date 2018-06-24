@@ -57,6 +57,10 @@ export default {
       }
     })
 
+    if (params.length - nbFieldWithValue >= 2) {
+      nbFieldWithValue = 0
+    }
+
     var percent = nbFieldWithValue / nbField * 100
     // return new Promise((resolve, reject) => {
     return percent.toFixed(0)

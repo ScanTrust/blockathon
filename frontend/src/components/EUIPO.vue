@@ -26,7 +26,7 @@
       <div class="column score-block" :class="[euipoScore > '0' ? 'visible' : 'hide' ]">
         <span>EUIPO confidence score: </span>
         <span class="score" :class="[euipoScore >= '50' ? 'green' : 'red' ]">{{this.euipoScore}}%</span>
-        <span>This product has {{this.euipoScore}}% chance to be counterfeit</span>
+        <span>This product has {{this.euipoScore}}% chance to be genuine</span>
       </div>
       
     </div>
@@ -139,7 +139,7 @@ export default {
   }
   .link-block{
     text-transform: capitalize;
-    padding: 10px;
+    padding: 30px 10px;
   }
   .score {
     font-size: 2em;
