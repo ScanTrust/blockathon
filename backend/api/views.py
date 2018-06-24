@@ -1,57 +1,57 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import requests
 from flask import jsonify, request
+from flask_cors import cross_origin
 from flask_restful import reqparse
-from api import app
-import api.bigchain_utils as utils
-from api.formatters import format_cause_response, format_history_response
-from . import gs1
+
+from . import app
+from .formatters import format_cause_response, format_history_response, get_mocked_info_response_format, \
+    get_euipo_format
+from .services import gs1, recheck, bigchain
 
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def index():
     """
     Main route, it works!
     """
     return jsonify({})
 
+# MOCK SCANTRUST BACKEND
+# urls need to stay the same (api/v2) since the various frontend components 
+# take a host:port as base, not a full base url (e.g. :5000/api/v2/) 
 
-@app.route('/api/users/info/', methods=['POST'])
-def user_info():
+
+@app.route('/api/v2/', methods=['GET'])
+@cross_origin()
+def api_index():
     """
-    Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
+    Main route, it works!
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('pub_key', type=str, required=True)
-    request_params = parser.parse_args()
-
-    user = utils.find_asset("\"scantrust:userdata\"  \"user\" \"%s\"" % request_params['pub_key'])
-    if user:
-        user["data"]["points"] = utils.get_points(request_params['pub_key'])
-        return jsonify(user['data'])
-
-    result = utils.onboard_user(request_params['pub_key'])
-    result["points"] = utils.get_points(request_params['pub_key'])
-    return jsonify(result)
+    return jsonify({})
 
 
-@app.route('/api/users/history/', methods=['POST'])
-def user_history():
+@app.route('/api/v2/consumer/scan/<string:uuid>/combined-info/', methods=['GET'])
+@cross_origin()
+def combined_info(uuid):
     """
-    Get the donation (transaction) history for a user.
-    Grouped by cause.
+    Main route, it works!
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('pub_key', type=str, required=True)
-    request_params = parser.parse_args()
-    history = utils.get_spent_tokens_public_key(request_params["pub_key"])
+    return jsonify(get_mocked_info_response_format(uuid))
 
-    return jsonify(format_history_response(history))
+# OTHER EXTERNAL SERVICES 
+# * gs1 - calls the cloud gs1 services
+# * recheck - uses a simple mock response, to avoide dependency on a in-dev mode service
 
 
 @app.route('/api/gs1/', methods=['GET', 'POST'])
+@cross_origin()
 def get_gs1():
+    """
+    Call the cloud.gs1.org service to retrieve data based on the gtin.  
+    """
     parser = reqparse.RequestParser()
     parser.add_argument('gtin', type=str, required=True)
     params = parser.parse_args()
@@ -60,7 +60,56 @@ def get_gs1():
     return jsonify(data)
 
 
+@app.route('/api/mock-services/recheck/')
+@cross_origin()
+def get_recheck():
+    """
+    Returns mock data as a standin as for the under-development ReCheck 
+    service.  Also allows the local demo to run without a live service
+    """
+    data = recheck.DEFAULT_DATA
+    return jsonify(data)
+
+
+# APP ROUTES
+
+@app.route('/api/users/info/', methods=['POST'])
+@cross_origin()
+def user_info():
+    """
+    Save the install_id and pub_key as an asset in DBD, setting ST as the owner.
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
+
+    user = bigchain.find_asset("\"scantrust:userdata\"  \"user\" \"%s\"" % request_params['pub_key'])
+    if user:
+        user["data"]["points"] = bigchain.get_points(request_params['pub_key'])
+        return jsonify(user['data'])
+
+    result = bigchain.onboard_user(request_params['pub_key'])
+    result["points"] = bigchain.get_points(request_params['pub_key'])
+    return jsonify(result)
+
+
+@app.route('/api/users/history/', methods=['POST'])
+@cross_origin()
+def user_history():
+    """
+    Get the donation (transaction) history for a user.
+    Grouped by cause.
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('pub_key', type=str, required=True)
+    request_params = parser.parse_args()
+    history = bigchain.get_spent_tokens_public_key(request_params["pub_key"])
+
+    return jsonify(format_history_response(history))
+
+
 @app.route('/api/scans/add/', methods=['POST'])
+@cross_origin()
 def add_scan():
     """
     Add a scan as asset to BDB and transfer the ownership to the client.
@@ -74,48 +123,63 @@ def add_scan():
     parser.add_argument('lng', type=float, required=True)
     request_params = parser.parse_args()
 
-    code = utils.find_asset("\"scantrust:codes\" \"%s\"" % request_params['message'])
+    code = bigchain.find_asset("\"scantrust:codes\" \"%s\"" % request_params['message'])
 
     if not code:
         return not_found()
 
     transaction = {}
-    transactions = utils.get_transactions(code['id'])
+    transactions = bigchain.get_transactions(code['id'])
     points_awarded = False
     if len(transactions) >= 1:
         transaction = transactions[len(transactions) - 1]
     if transaction and not transaction['metadata'].get('is_consumed', True):
         # Create a new transaction to self, where the metadata states is_consumed=True
         # Assign points
-        utils.transfer_asset_to_self(transaction["id"], {"is_consumed": True})
-        utils.transfer_divisible_asset(request_params["pub_key"], code["data"]["points"])
+        bigchain.transfer_asset_to_self(transaction["id"], {"is_consumed": True})
+        bigchain.transfer_divisible_asset(request_params["pub_key"], code["data"]["points"])
         points_awarded = True
 
-    scan_asset, new = utils.insert_scan(request_params, code["id"])
+    scan_asset, new = bigchain.insert_scan(request_params, code["id"])
     if new:
-        utils.transfer_st_asset(scan_asset, request_params["pub_key"], {})
+        bigchain.transfer_st_asset(scan_asset, request_params["pub_key"], {})
 
     return jsonify(
         {
             "scan_asset_id": scan_asset,
             "points_awarded": points_awarded,
             "code_value": code["data"]["points"],
-            "euipo_data": code["data"]["euipo_data"]
+            "euipo_data": get_euipo_format()
         }
     )
 
 
+@app.route('/api/alerts/send/', methods=['POST'])
+@cross_origin()
+def send_alert():
+    parser = reqparse.RequestParser()
+    parser.add_argument('message', type=str, required=True)
+    request_params = parser.parse_args()
+    result = requests.post(
+        url="http://services.blockathon.eu/api/blockathon/edb/authorities/alert",
+        json={"message": request_params["message"], "product": "53"},
+    )
+
+    return jsonify({"status": result.status_code})
+
+
 @app.route('/api/causes/', methods=['GET'])
+@cross_origin()
 def get_causes():
     """
     Return a simple list of causes registered on the blockchain.
     """
-    causes = utils.find_asset("\"scantrust:cause\"", multiple=True)
+    causes = bigchain.find_asset("\"scantrust:cause\"", multiple=True)
     return jsonify(format_cause_response(causes))
 
 
-
 @app.errorhandler(404)
+@cross_origin()
 def not_found(error=None):
     """
     Handles 404 errors.
